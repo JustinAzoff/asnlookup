@@ -1,0 +1,2 @@
+git+git://github.com/hadiasghari/pyasn.git#egg=pyasn
+pyzmq==16.0.0

@@ -18,6 +18,7 @@ setup(name='asnlookup',
       install_requires=[
           # -*- Extra requirements: -*-
           "pyasn",
+          "pyzmq",
       ],
       entry_points = {
         'console_scripts': [
