@@ -1,10 +1,12 @@
-from .backend import ASNLookup
+from .backend import ASNLookup, ASRecord
 
+import logging
 import time
 import zmq
 import json
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")

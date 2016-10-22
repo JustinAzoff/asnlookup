@@ -2,8 +2,11 @@
 from .data_manager import update_asnnames, update_asndb
 
 from collections import namedtuple
+import logging
 import pyasn
 import json
+
+logger = logging.getLogger(__name__)
 
 def load_asnames(fn):
     with open(fn) as f:
@@ -23,7 +26,11 @@ class ASNLookup(object):
         return self.asnames.get(str(asn), "NA")
 
     def lookup(self, ip):
-        rec =  self.asndb.lookup(ip)
+        try:
+            rec =  self.asndb.lookup(ip)
+        except:#FIXME
+            logger.exception("Lookup failed for ip=%s", ip)
+            rec = None
         if not rec:
             return ASRecord(ip, 'NA', 'NA', 'NA')
         asn, prefix = rec
