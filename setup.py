@@ -21,7 +21,9 @@ setup(name='asnlookup',
       ],
       entry_points = {
         'console_scripts': [
-            'asnlookup      = asnlookup.main:main',
+            'asnlookup          = asnlookup.main:main',
+            'asnlookup-server   = asnlookup.server:main',
+            'asnlookup-client   = asnlookup.client:main',
         ]
       },
   )
