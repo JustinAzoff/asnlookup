@@ -2,14 +2,21 @@
 """Manage data files"""
 
 import contextlib
+import glob
 import logging
 import os
+import shutil
 import subprocess
 import tempfile
 import time
 
 class DataManagerError(Exception):
     pass
+
+def run(cmd):
+    logger.debug("Executing cmd=%s", cmd)
+    subprocess.check_call(cmd)
+
 
 @contextlib.contextmanager
 def cwd(path):
@@ -59,6 +66,19 @@ def download_asnnames(output_filename):
     subprocess.check_call(cmd)
     os.rename(fn, output_filename)
 
+def get_single_file(path="*.rib"):
+    filenames = glob.glob(path)
+    if len(filenames) != 1:
+        raise DataManagerError("More than one file found: files=%s", filenames)
+    return filenames[0]
+
+def cat(output_filename, *input_filenames):
+    logger.debug("Executing cat out=%s in=%s", output_filename, input_filenames)
+    with open(output_filename, 'w') as of:
+        for fn in input_filenames:
+            with open(fn) as f:
+                shutil.copyfileobj(f, of)
+
 def download_and_convert(output_filename):
     working_dir = tempfile.mkdtemp()
 
@@ -67,19 +87,19 @@ def download_and_convert(output_filename):
 
     logger.debug("download_and_convert working_dir=%s", working_dir)
     with cwd(working_dir):
-        cmd = ["pyasn_util_download.py", "--latest"]
-        logger.debug("Executing cmd=%s", cmd)
-        subprocess.check_call(cmd)
-
-        filenames_here = os.listdir(".")
-        if len(filenames_here) != 1:
-            raise DataManagerError("More than one file after pyasn_util_download: files=%s", filenames_here)
-        rib = filenames_here[0]
-
-        cmd = ["pyasn_util_convert.py", "--single", rib, fn]
-        logger.debug("Executing cmd=%s", cmd)
-        subprocess.check_call(cmd)
+        run (["pyasn_util_download.py", "--latestv4"])
+        rib = get_single_file("rib*.bz2")
+        run(["pyasn_util_convert.py", "--single", rib, "v4.db"])
         os.unlink(rib)
+
+        run(["pyasn_util_download.py", "--latestv6"])
+        rib = get_single_file("rib*.bz2")
+        run(["pyasn_util_convert.py", "--single", rib, "v6.db"])
+        os.unlink(rib)
+
+        cat(fn_full_path, 'v4.db', 'v6.db')
+        os.unlink("v4.db")
+        os.unlink("v6.db")
 
     os.rename(fn_full_path, output_filename)
     os.rmdir(working_dir)
