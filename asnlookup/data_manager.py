@@ -83,7 +83,7 @@ def download_and_convert(output_filename):
     working_dir = tempfile.mkdtemp()
 
     fn = output_filename + ".new"
-    fn_full_path = os.path.join(working_dir, fn)
+    fn_full_tmp_path = os.path.join(working_dir, fn)
 
     logger.debug("download_and_convert working_dir=%s", working_dir)
     with cwd(working_dir):
@@ -97,11 +97,13 @@ def download_and_convert(output_filename):
         run(["pyasn_util_convert.py", "--single", rib, "v6.db"])
         os.unlink(rib)
 
-        cat(fn_full_path, 'v4.db', 'v6.db')
+        cat(fn_full_tmp_path, 'v4.db', 'v6.db')
         os.unlink("v4.db")
         os.unlink("v6.db")
 
-    os.rename(fn_full_path, output_filename)
+    #This may be on a different filesystem so move using shutil then rename
+    shutil.move(fn_full_tmp_path, fn)
+    os.rename(fn, output_filename)
     os.rmdir(working_dir)
 
 def update_asnnames(output_filename, max_age_in_hours=24):
