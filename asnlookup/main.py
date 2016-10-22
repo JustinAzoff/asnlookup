@@ -26,7 +26,7 @@ class ASNLookup(object):
     def lookup(self, ip):
         rec =  self.asndb.lookup(ip)
         if not rec:
-            return None
+            return ASRecord(ip, 'NA', 'NA', 'NA')
         asn, prefix = rec
         owner = self.lookup_asname(asn)
         return ASRecord(ip, asn, prefix, owner)
