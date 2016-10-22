@@ -5,13 +5,17 @@ import time
 import zmq
 import json
 
+logger = logging.getLogger(__name__)
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     context = zmq.Context()
     socket = context.socket(zmq.REP)
     socket.bind("tcp://*:5555")
 
+    logger.info("Initializing...")
     l = ASNLookup()
+    logger.info("Startup complete")
 
     while True:
         #  Wait for next request from client
