@@ -1,50 +1,27 @@
-from setuptools import setup
-from glob import glob
+from setuptools import setup, find_packages
 
-setup(name="cymruwhois",
-    version="1.4",
-    description="Client for the whois.cymru.com service",
-    long_description="""
-Perform lookups by ip address and return ASN, Country Code, and Netblock Owner::
+version = '0.0.1'
+long_description = ""
 
-    >>> import socket
-    >>> ip = socket.gethostbyname("www.google.com")
-    >>> from cymruwhois import Client
-    >>> c=Client()
-    >>> r=c.lookup(ip)
-    >>> print r.asn
-    15169
-    >>> print r.owner
-    GOOGLE - Google Inc.
-
-    """,
-
-    url="http://packages.python.org/cymruwhois/",
-    download_url="http://github.com/JustinAzoff/python-cymruwhois/tree/master",
-    license='MIT',
-    classifiers=[
-        "Topic :: System :: Networking",
-        "Environment :: Console",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python",
-        "Development Status :: 5 - Production/Stable",
-    ],
-    keywords='ASN',
-    author="Justin Azoff",
-    author_email="JAzoff@uamail.albany.edu",
-    py_modules = ["cymruwhois"], 
-    extras_require = {
-        'CACHE':  ["python-memcached"],
-        'docs' : ['sphinx'],
-        'tests' : ['nose'],
-    },
-    entry_points = {
+setup(name='asnlookup',
+      version=version,
+      description="ASN Lookup",
+      long_description=long_description,
+      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      keywords='ASN',
+      author='Justin Azoff',
+      author_email='justin@bouncybouncy.net',
+      url='',
+      license='MIT',
+      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      include_package_data=True,
+      install_requires=[
+          # -*- Extra requirements: -*-
+          "pyasn",
+      ],
+      entry_points = {
         'console_scripts': [
-            'cymruwhois   = cymruwhois:lookup_stdin',
+            'asnlookup      = asnlookup.main:main',
         ]
-    },
-    setup_requires=[
-    ],
-    test_suite='nose.collector',
-)
+      },
+  )
