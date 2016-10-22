@@ -60,7 +60,11 @@ class ASNClient:
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    c = ASNClient()
+
+    endpoint = 'tcp://localhost:5555'
+    if len(sys.argv) > 1:
+        endpoint = sys.argv[1]
+    c = ASNClient(endpoint)
     ips = (line.rstrip() for line in sys.stdin)
     for rec in c.lookup_many(ips):
         print("\t".join(str(rec[f]) for f in c.fields))
