@@ -1,4 +1,4 @@
-from .backend import ASNLookup, ASRecord
+from .backend import ASNLookup, FIELDS, ASRecord
 
 import logging
 import time
@@ -15,10 +15,15 @@ def main():
 
     while True:
         #  Wait for next request from client
-        ip = socket.recv_string()
-        response = l.lookup(ip)
+        msg = socket.recv_string()
+        if msg == "fields":
+            socket.send_string(json.dumps(FIELDS))
+            continue
+
+        ips = msg.split()
+        response = [l.lookup(ip) for ip in ips]
         #  Send reply back to client
-        socket.send_string(json.dumps(response._asdict()))
+        socket.send_string(json.dumps(response))
 
 if __name__ == "__main__":
     main()

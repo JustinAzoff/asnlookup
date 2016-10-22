@@ -12,7 +12,8 @@ def load_asnames(fn):
     with open(fn) as f:
         return json.load(f)
 
-ASRecord = namedtuple("ASRecord", "ip asn prefix owner")
+FIELDS = "ip", "asn", "prefix", "owner"
+ASRecord = namedtuple("ASRecord", FIELDS)
 
 class ASNLookup(object):
     def __init__(self):
@@ -34,5 +35,8 @@ class ASNLookup(object):
         if not rec:
             return ASRecord(ip, 'NA', 'NA', 'NA')
         asn, prefix = rec
+        asn = asn if asn else 'NA'
+        prefix = prefix if prefix else 'NA'
+
         owner = self.lookup_asname(asn)
         return ASRecord(ip, asn, prefix, owner)
