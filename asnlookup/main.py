@@ -10,7 +10,7 @@ def load_asnames(fn):
     with open(fn) as f:
         return json.load(f)
 
-ASRecord = namedtuple("ASRecord", "asn prefix owner")
+ASRecord = namedtuple("ASRecord", "ip asn prefix owner")
 
 class ASNLookup(object):
     def __init__(self):
@@ -29,7 +29,7 @@ class ASNLookup(object):
             return None
         asn, prefix = rec
         owner = self.lookup_asname(asn)
-        return ASRecord(asn, prefix, owner)
+        return ASRecord(ip, asn, prefix, owner)
 
 def main():
     l = ASNLookup()
