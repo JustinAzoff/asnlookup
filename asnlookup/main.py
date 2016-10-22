@@ -32,6 +32,7 @@ class ASNLookup(object):
         return ASRecord(ip, asn, prefix, owner)
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     l = ASNLookup()
     for line in sys.stdin:
         ip = line.strip()
