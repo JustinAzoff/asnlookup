@@ -22,6 +22,7 @@ setup(name='asnlookup',
       entry_points = {
         'console_scripts': [
             'asnlookup          = asnlookup.main:main',
+            'asnlookup-download = asnlookup.data_manager:main',
             'asnlookup-server   = asnlookup.server:main',
             'asnlookup-client   = asnlookup.client:main',
         ]

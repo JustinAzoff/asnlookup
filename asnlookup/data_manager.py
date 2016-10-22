@@ -110,7 +110,10 @@ def update_asnnames(output_filename, max_age_in_hours=24):
 def update_asndb(output_filename, max_age_in_hours=24):
     return maybe_update("db", download_and_convert, output_filename, max_age_in_hours)
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.DEBUG)
     update_asnnames("asnames.json", 24)
     update_asndb("asn.db", 24)
+
+if __name__ == "__main__":
+    main()
