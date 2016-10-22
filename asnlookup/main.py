@@ -35,7 +35,8 @@ def main():
     l = ASNLookup()
     for line in sys.stdin:
         ip = line.strip()
-        print(l.lookup(ip))
+        rec = l.lookup(ip)
+        print("\t".join(str(s) for s in rec))
 
 
 if __name__ == '__main__':
