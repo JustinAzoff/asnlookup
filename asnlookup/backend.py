@@ -16,12 +16,15 @@ FIELDS = "ip", "asn", "prefix", "owner"
 ASRecord = namedtuple("ASRecord", FIELDS)
 
 class ASNLookup(object):
-    def __init__(self):
-        update_asnnames('asnames.json', 24)
-        update_asndb('asn.db', 24)
+    namedb_filename = 'asnames.json'
+    db_filename = 'asn.db'
 
-        self.asndb = pyasn.pyasn('asn.db')
-        self.asnames = load_asnames('asnames.json')
+    def __init__(self):
+        update_asndb(self.db_filename, 24)
+        update_asnnames(self.namedb_filename, 24)
+
+        self.asndb = pyasn.pyasn(self.db_filename)
+        self.asnames = load_asnames(self.namedb_filename)
 
     def lookup_asname(self, asn):
         return self.asnames.get(str(asn), "NA")
