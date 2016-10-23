@@ -10,4 +10,5 @@ RUN pip install .
 RUN mkdir -p /data
 WORKDIR /data
 
+EXPOSE 5555
 CMD asnlookup-server
