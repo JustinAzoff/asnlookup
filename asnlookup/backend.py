@@ -2,10 +2,11 @@
 from .data_manager import update_asnnames, update_asndb
 
 from collections import namedtuple
+import json
 import logging
 import os
 import pyasn
-import json
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +28,15 @@ class ASNLookup(object):
         self.reload()
 
     def reload(self):
+        start = time.time()
+        logger.debug("reloading databases...")
         self.asndb = pyasn.pyasn(self.db_filename)
         self.asnames = load_asnames(self.namedb_filename)
 
         self.db_ino = os.stat(self.db_filename).st_ino
         self.namedb_ino = os.stat(self.namedb_filename).st_ino
+        end = time.time()
+        logger.debug("reloading databases complete seconds=%0.1f", end-start)
 
     def reload_neaded(self):
         db_ino = os.stat(self.db_filename).st_ino
