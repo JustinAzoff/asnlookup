@@ -3,6 +3,7 @@ from .data_manager import update_asnnames, update_asndb
 
 from collections import namedtuple
 import logging
+import os
 import pyasn
 import json
 
@@ -23,8 +24,25 @@ class ASNLookup(object):
         update_asndb(self.db_filename, 24)
         update_asnnames(self.namedb_filename, 24)
 
+        self.reload()
+
+    def reload(self):
         self.asndb = pyasn.pyasn(self.db_filename)
         self.asnames = load_asnames(self.namedb_filename)
+
+        self.db_ino = os.stat(self.db_filename).st_ino
+        self.namedb_ino = os.stat(self.namedb_filename).st_ino
+
+    def reload_neaded(self):
+        db_ino = os.stat(self.db_filename).st_ino
+        namedb_ino = os.stat(self.namedb_filename).st_ino
+
+        if db_ino != self.db_ino or namedb_ino != self.namedb_ino:
+            self.reload()
+
+    def reload_if_neaded(self):
+        if self.reload_neaded():
+            self.reload()
 
     def lookup_asname(self, asn):
         return self.asnames.get(str(asn), "NA")
