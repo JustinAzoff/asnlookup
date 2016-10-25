@@ -38,6 +38,10 @@ class AsnlookupServicer(asnlookup_pb2.AsnlookupServicer):
         for request in request_iterator:
             yield self._get_response(request.address)
 
+    def LookupBatch(self, request, context):
+        replies = [self._get_response(request.address) for request in request.requests]
+        return asnlookup_pb2.LookupReplyBatch(replies=replies)
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
 

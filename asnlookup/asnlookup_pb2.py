@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='asnlookup.proto',
   package='asnlookup',
   syntax='proto3',
-  serialized_pb=_b('\n\x0f\x61snlookup.proto\x12\tasnlookup\"\x07\n\x05\x45mpty\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\" \n\rLookupRequest\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\"V\n\x0bLookupReply\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\x0b\n\x03\x61sn\x18\x02 \x01(\x05\x12\x0e\n\x06prefix\x18\x03 \x01(\t\x12\r\n\x05owner\x18\x04 \x01(\t\x12\n\n\x02\x63\x63\x18\x05 \x01(\t2\xc3\x01\n\tAsnlookup\x12\x32\n\x05Hello\x12\x10.asnlookup.Empty\x1a\x15.asnlookup.HelloReply\"\x00\x12<\n\x06Lookup\x12\x18.asnlookup.LookupRequest\x1a\x16.asnlookup.LookupReply\"\x00\x12\x44\n\nLookupMany\x12\x18.asnlookup.LookupRequest\x1a\x16.asnlookup.LookupReply\"\x00(\x01\x30\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0f\x61snlookup.proto\x12\tasnlookup\"\x07\n\x05\x45mpty\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\" \n\rLookupRequest\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\"V\n\x0bLookupReply\x12\x0f\n\x07\x61\x64\x64ress\x18\x01 \x01(\t\x12\x0b\n\x03\x61sn\x18\x02 \x01(\x05\x12\x0e\n\x06prefix\x18\x03 \x01(\t\x12\r\n\x05owner\x18\x04 \x01(\t\x12\n\n\x02\x63\x63\x18\x05 \x01(\t\"@\n\x12LookupRequestBatch\x12*\n\x08requests\x18\x01 \x03(\x0b\x32\x18.asnlookup.LookupRequest\";\n\x10LookupReplyBatch\x12\'\n\x07replies\x18\x01 \x03(\x0b\x32\x16.asnlookup.LookupReply2\x90\x02\n\tAsnlookup\x12\x32\n\x05Hello\x12\x10.asnlookup.Empty\x1a\x15.asnlookup.HelloReply\"\x00\x12<\n\x06Lookup\x12\x18.asnlookup.LookupRequest\x1a\x16.asnlookup.LookupReply\"\x00\x12\x44\n\nLookupMany\x12\x18.asnlookup.LookupRequest\x1a\x16.asnlookup.LookupReply\"\x00(\x01\x30\x01\x12K\n\x0bLookupBatch\x12\x1d.asnlookup.LookupRequestBatch\x1a\x1b.asnlookup.LookupReplyBatch\"\x00\x62\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -170,10 +170,76 @@ _LOOKUPREPLY = _descriptor.Descriptor(
   serialized_end=190,
 )
 
+
+_LOOKUPREQUESTBATCH = _descriptor.Descriptor(
+  name='LookupRequestBatch',
+  full_name='asnlookup.LookupRequestBatch',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='requests', full_name='asnlookup.LookupRequestBatch.requests', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=192,
+  serialized_end=256,
+)
+
+
+_LOOKUPREPLYBATCH = _descriptor.Descriptor(
+  name='LookupReplyBatch',
+  full_name='asnlookup.LookupReplyBatch',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='replies', full_name='asnlookup.LookupReplyBatch.replies', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=258,
+  serialized_end=317,
+)
+
+_LOOKUPREQUESTBATCH.fields_by_name['requests'].message_type = _LOOKUPREQUEST
+_LOOKUPREPLYBATCH.fields_by_name['replies'].message_type = _LOOKUPREPLY
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['HelloReply'] = _HELLOREPLY
 DESCRIPTOR.message_types_by_name['LookupRequest'] = _LOOKUPREQUEST
 DESCRIPTOR.message_types_by_name['LookupReply'] = _LOOKUPREPLY
+DESCRIPTOR.message_types_by_name['LookupRequestBatch'] = _LOOKUPREQUESTBATCH
+DESCRIPTOR.message_types_by_name['LookupReplyBatch'] = _LOOKUPREPLYBATCH
 
 Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), dict(
   DESCRIPTOR = _EMPTY,
@@ -202,6 +268,20 @@ LookupReply = _reflection.GeneratedProtocolMessageType('LookupReply', (_message.
   # @@protoc_insertion_point(class_scope:asnlookup.LookupReply)
   ))
 _sym_db.RegisterMessage(LookupReply)
+
+LookupRequestBatch = _reflection.GeneratedProtocolMessageType('LookupRequestBatch', (_message.Message,), dict(
+  DESCRIPTOR = _LOOKUPREQUESTBATCH,
+  __module__ = 'asnlookup_pb2'
+  # @@protoc_insertion_point(class_scope:asnlookup.LookupRequestBatch)
+  ))
+_sym_db.RegisterMessage(LookupRequestBatch)
+
+LookupReplyBatch = _reflection.GeneratedProtocolMessageType('LookupReplyBatch', (_message.Message,), dict(
+  DESCRIPTOR = _LOOKUPREPLYBATCH,
+  __module__ = 'asnlookup_pb2'
+  # @@protoc_insertion_point(class_scope:asnlookup.LookupReplyBatch)
+  ))
+_sym_db.RegisterMessage(LookupReplyBatch)
 
 
 import grpc
@@ -234,6 +314,11 @@ class AsnlookupStub(object):
         request_serializer=LookupRequest.SerializeToString,
         response_deserializer=LookupReply.FromString,
         )
+    self.LookupBatch = channel.unary_unary(
+        '/asnlookup.Asnlookup/LookupBatch',
+        request_serializer=LookupRequestBatch.SerializeToString,
+        response_deserializer=LookupReplyBatch.FromString,
+        )
 
 
 class AsnlookupServicer(object):
@@ -249,6 +334,11 @@ class AsnlookupServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def LookupMany(self, request_iterator, context):
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def LookupBatch(self, request, context):
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -271,6 +361,11 @@ def add_AsnlookupServicer_to_server(servicer, server):
           request_deserializer=LookupRequest.FromString,
           response_serializer=LookupReply.SerializeToString,
       ),
+      'LookupBatch': grpc.unary_unary_rpc_method_handler(
+          servicer.LookupBatch,
+          request_deserializer=LookupRequestBatch.FromString,
+          response_serializer=LookupReplyBatch.SerializeToString,
+      ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
       'asnlookup.Asnlookup', rpc_method_handlers)
@@ -284,6 +379,8 @@ class BetaAsnlookupServicer(object):
     context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
   def LookupMany(self, request_iterator, context):
     context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
+  def LookupBatch(self, request, context):
+    context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
 
 
 class BetaAsnlookupStub(object):
@@ -295,22 +392,28 @@ class BetaAsnlookupStub(object):
   Lookup.future = None
   def LookupMany(self, request_iterator, timeout, metadata=None, with_call=False, protocol_options=None):
     raise NotImplementedError()
+  def LookupBatch(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
+    raise NotImplementedError()
+  LookupBatch.future = None
 
 
 def beta_create_Asnlookup_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
   request_deserializers = {
     ('asnlookup.Asnlookup', 'Hello'): Empty.FromString,
     ('asnlookup.Asnlookup', 'Lookup'): LookupRequest.FromString,
+    ('asnlookup.Asnlookup', 'LookupBatch'): LookupRequestBatch.FromString,
     ('asnlookup.Asnlookup', 'LookupMany'): LookupRequest.FromString,
   }
   response_serializers = {
     ('asnlookup.Asnlookup', 'Hello'): HelloReply.SerializeToString,
     ('asnlookup.Asnlookup', 'Lookup'): LookupReply.SerializeToString,
+    ('asnlookup.Asnlookup', 'LookupBatch'): LookupReplyBatch.SerializeToString,
     ('asnlookup.Asnlookup', 'LookupMany'): LookupReply.SerializeToString,
   }
   method_implementations = {
     ('asnlookup.Asnlookup', 'Hello'): face_utilities.unary_unary_inline(servicer.Hello),
     ('asnlookup.Asnlookup', 'Lookup'): face_utilities.unary_unary_inline(servicer.Lookup),
+    ('asnlookup.Asnlookup', 'LookupBatch'): face_utilities.unary_unary_inline(servicer.LookupBatch),
     ('asnlookup.Asnlookup', 'LookupMany'): face_utilities.stream_stream_inline(servicer.LookupMany),
   }
   server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
@@ -321,16 +424,19 @@ def beta_create_Asnlookup_stub(channel, host=None, metadata_transformer=None, po
   request_serializers = {
     ('asnlookup.Asnlookup', 'Hello'): Empty.SerializeToString,
     ('asnlookup.Asnlookup', 'Lookup'): LookupRequest.SerializeToString,
+    ('asnlookup.Asnlookup', 'LookupBatch'): LookupRequestBatch.SerializeToString,
     ('asnlookup.Asnlookup', 'LookupMany'): LookupRequest.SerializeToString,
   }
   response_deserializers = {
     ('asnlookup.Asnlookup', 'Hello'): HelloReply.FromString,
     ('asnlookup.Asnlookup', 'Lookup'): LookupReply.FromString,
+    ('asnlookup.Asnlookup', 'LookupBatch'): LookupReplyBatch.FromString,
     ('asnlookup.Asnlookup', 'LookupMany'): LookupReply.FromString,
   }
   cardinalities = {
     'Hello': cardinality.Cardinality.UNARY_UNARY,
     'Lookup': cardinality.Cardinality.UNARY_UNARY,
+    'LookupBatch': cardinality.Cardinality.UNARY_UNARY,
     'LookupMany': cardinality.Cardinality.STREAM_STREAM,
   }
   stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)

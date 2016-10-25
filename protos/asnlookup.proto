@@ -6,6 +6,8 @@ service Asnlookup {
     rpc Hello (Empty) returns (HelloReply) {}
     rpc Lookup (LookupRequest) returns (LookupReply) {}
     rpc LookupMany(stream LookupRequest) returns (stream LookupReply) {}
+
+    rpc LookupBatch(LookupRequestBatch) returns (LookupReplyBatch) {}
 }
 
 message Empty {
@@ -26,4 +28,12 @@ message LookupReply {
     string prefix = 3;
     string owner = 4;
     string cc = 5;
+}
+
+message LookupRequestBatch {
+    repeated LookupRequest requests = 1;
+}
+
+message LookupReplyBatch {
+    repeated LookupReply replies = 1;
 }
