@@ -1,0 +1,14 @@
+[Unit]
+Description=asnlookup
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill asnlookup
+ExecStartPre=-/usr/bin/docker rm asnlookup
+ExecStartPre=/usr/bin/docker pull justinazoff/asnlookup
+ExecStart=/usr/bin/docker  run --name asnlookup -v /srv/asnlookup/data:/data --rm=true -p 5555:80 justinazoff/asnlookup
+
+[Install]
+WantedBy=multi-user.target
