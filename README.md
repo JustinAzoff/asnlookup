@@ -12,6 +12,8 @@
 
 # Client usage
 
+Install https://github.com/JustinAzoff/asnlookup-client-python
+
     echo 8.8.8.8 | asnlookup-client
 
 # Docker
