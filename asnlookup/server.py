@@ -25,6 +25,10 @@ def main():
         msg = socket.recv_string()
         if msg == "fields":
             socket.send_string(json.dumps(FIELDS))
+            #TODO: better way to do this?
+            if time.time() - last_reload_check > 300:
+                l.reload_if_neaded()
+                last_reload_check = time.time()
             continue
 
         ips = msg.split()
@@ -33,10 +37,6 @@ def main():
         socket.send_string(json.dumps(response))
 
 
-        #TODO: better way to do this?
-        if time.time() - last_reload_check > 300:
-            l.reload_if_neaded()
-            last_reload_check = time.time()
 
 if __name__ == "__main__":
     main()
