@@ -66,8 +66,6 @@ class ASNLookup(object):
             rec =  self.asndb.lookup(ip)
         except:#FIXME
             logger.exception("Lookup failed for ip=%s", ip)
-            rec = None
-        if not rec:
             return ASRecord(ip, 'NA', 'NA', 'NA', 'NA')
         asn, prefix = rec
         asn = asn if asn else 'NA'
