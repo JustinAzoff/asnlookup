@@ -20,9 +20,9 @@ Install https://github.com/JustinAzoff/asnlookup-client-python
 
 ## Using my public image:
 
-    docker run --rm -t -i -v `pwd`/data:/data justinazoff/asnlookup
+    docker run --rm -t -i -v `pwd`/data:/data -p 5555:5555 justinazoff/asnlookup
 
 ## Building your own image
 
     docker build -t asnlookup .
-    docker run --rm -t -i -v `pwd`/data:/data asnlookup
+    docker run --rm -t -i -v `pwd`/data:/data -p 5555:5555 asnlookup
