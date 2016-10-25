@@ -11,10 +11,16 @@ import time
 logger = logging.getLogger(__name__)
 
 def load_asnames(fn):
+    data = {}
     with open(fn) as f:
-        return json.load(f)
+        upstream_data = json.load(f)
 
-FIELDS = "ip", "asn", "prefix", "owner"
+    for k, v in upstream_data.items():
+        owner, cc = v.rsplit(",", 1)
+        data[k] = (owner.strip(), cc.strip())
+    return data
+
+FIELDS = "ip", "asn", "prefix", "owner", "cc"
 ASRecord = namedtuple("ASRecord", FIELDS)
 
 class ASNLookup(object):
@@ -50,7 +56,10 @@ class ASNLookup(object):
             self.reload()
 
     def lookup_asname(self, asn):
-        return self.asnames.get(str(asn), "NA")
+        rec = self.asnames.get(str(asn))
+        if not rec:
+            return "NA", "NA"
+        return rec
 
     def lookup(self, ip):
         try:
@@ -59,10 +68,10 @@ class ASNLookup(object):
             logger.exception("Lookup failed for ip=%s", ip)
             rec = None
         if not rec:
-            return ASRecord(ip, 'NA', 'NA', 'NA')
+            return ASRecord(ip, 'NA', 'NA', 'NA', 'NA')
         asn, prefix = rec
         asn = asn if asn else 'NA'
         prefix = prefix if prefix else 'NA'
 
-        owner = self.lookup_asname(asn)
-        return ASRecord(ip, asn, prefix, owner)
+        owner, cc = self.lookup_asname(asn)
+        return ASRecord(ip, asn, prefix, owner, cc)
