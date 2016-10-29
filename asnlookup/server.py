@@ -8,10 +8,12 @@ import zmq
 
 logger = logging.getLogger(__name__)
 
+fields_bytes = json.dumps(FIELDS).encode()
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     context = zmq.Context()
-    socket = context.socket(zmq.REP)
+    socket = context.socket(zmq.ROUTER)
     socket.bind("tcp://*:5555")
 
     logger.info("Initializing...")
@@ -22,20 +24,20 @@ def main():
 
     while True:
         #  Wait for next request from client
-        msg = socket.recv_string()
-        if msg == "fields":
-            socket.send_string(json.dumps(FIELDS))
+        r = socket.recv_multipart()
+        ident,  msg = r
+        if msg == b"fields":
+            socket.send_multipart([ident, fields_bytes])
             #TODO: better way to do this?
             if time.time() - last_reload_check > 300:
                 l.reload_if_neaded()
                 last_reload_check = time.time()
             continue
 
-        ips = msg.split()
+        ips = msg.decode().split()
         response = [l.lookup(ip) for ip in ips]
         #  Send reply back to client
-        socket.send_string(json.dumps(response))
-
+        socket.send_multipart([ident, json.dumps(response).encode()])
 
 
 if __name__ == "__main__":
