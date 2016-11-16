@@ -16,8 +16,15 @@ def load_asnames(fn):
         upstream_data = json.load(f)
 
     for k, v in upstream_data.items():
-        owner, cc = v.rsplit(",", 1)
-        data[k] = (owner.strip(), cc.strip())
+        if ',' not in v:
+            owner = cc = ''
+            if len(v) == 2:
+                cc = v
+            else:
+                owner = v
+        else:
+            owner, cc = v.rsplit(",", 1)
+            data[k] = (owner.strip(), cc.strip())
     return data
 
 FIELDS = "ip", "asn", "prefix", "owner", "cc"
