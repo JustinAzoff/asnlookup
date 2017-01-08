@@ -69,7 +69,7 @@ def download_asnnames(output_filename):
 def get_single_file(path="*.rib"):
     filenames = glob.glob(path)
     if len(filenames) != 1:
-        raise DataManagerError("More than one file found: files=%s", filenames)
+        raise DataManagerError("Expected exactly one data file, found %d: files=%s" % (len(filenames), filenames))
     return filenames[0]
 
 def cat(output_filename, *input_filenames):
