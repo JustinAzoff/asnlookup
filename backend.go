@@ -1,9 +1,8 @@
-package main
+package asnlookup
 
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -52,6 +51,7 @@ func (b *AsnBackend) reload() error {
 }
 func (b *AsnBackend) reloadDB() error {
 	t := iptree.New()
+	log.Printf("Reloading ASN db %s", b.DBFilename)
 	file, err := os.Open(b.DBFilename)
 	if err != nil {
 		return err
@@ -80,6 +80,7 @@ func (b *AsnBackend) reloadDB() error {
 }
 
 func (b *AsnBackend) reloadNames() error {
+	log.Printf("Reloading ASN owner db %s", b.NamesFilename)
 	file, err := os.Open(b.NamesFilename)
 	if err != nil {
 		return err
@@ -112,7 +113,7 @@ func (b *AsnBackend) reloadNames() error {
 	return nil
 }
 
-func (b *AsnBackend) lookup(ip string) (Record, error) {
+func (b *AsnBackend) Lookup(ip string) (Record, error) {
 	var rec Record
 	val, found, err := b.iptree.GetByString(ip)
 	if err != nil {
@@ -131,22 +132,4 @@ func (b *AsnBackend) lookup(ip string) (Record, error) {
 	}
 
 	return rec, nil
-}
-
-func main() {
-
-	b, err := NewAsnBackend("asn.db", "asnames.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		rec, err := b.lookup(scanner.Text())
-		if err != nil {
-			log.Print(err)
-		} else {
-			fmt.Printf("%s\t%s\t%s\t%s\n", rec.IP, rec.AS, rec.Owner, rec.CC)
-		}
-	}
 }
