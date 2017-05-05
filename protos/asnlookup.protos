@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package asnlookup;
+
+service Asnlookup {
+    rpc Hello (Empty) returns (HelloReply) {}
+    rpc Lookup (LookupRequest) returns (LookupReply) {}
+    rpc LookupMany(stream LookupRequest) returns (stream LookupReply) {}
+
+    rpc LookupBatch(LookupRequestBatch) returns (LookupReplyBatch) {}
+}
+
+message Empty {
+}
+
+
+message HelloReply {
+    string message = 1;
+}
+
+message LookupRequest {
+    string address = 1;
+}
+
+message LookupReply {
+    string address = 1;
+    int32 as = 2;
+    string prefix = 3;
+    string owner = 4;
+    string cc = 5;
+}
+
+message LookupRequestBatch {
+    repeated LookupRequest requests = 1;
+}
+
+message LookupReplyBatch {
+    repeated LookupReply replies = 1;
+}
