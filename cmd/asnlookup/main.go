@@ -22,7 +22,7 @@ func main() {
 		if err != nil {
 			log.Print(err)
 		} else {
-			fmt.Printf("%s\t%s\t%s\t%s\n", rec.IP, rec.AS, rec.Owner, rec.CC)
+			fmt.Printf("%s\t%s\t%s\t%s\t%s\n", rec.Prefix, rec.IP, rec.AS, rec.Owner, rec.CC)
 		}
 	}
 }

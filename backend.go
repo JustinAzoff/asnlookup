@@ -27,10 +27,11 @@ type AsnBackend struct {
 }
 
 type Record struct {
-	IP    string
-	AS    string
-	Owner string
-	CC    string
+	AS     string
+	Prefix string
+	IP     string
+	Owner  string
+	CC     string
 }
 
 func NewAsnBackend(db, names string) (*AsnBackend, error) {
@@ -43,21 +44,22 @@ func NewAsnBackend(db, names string) (*AsnBackend, error) {
 }
 
 func (b *AsnBackend) reload() error {
-	err := b.reloadDB()
+	err := b.reloadNames()
 	if err != nil {
 		return err
 	}
-	return b.reloadNames()
+	return b.reloadDB()
 }
 func (b *AsnBackend) reloadDB() error {
 	t := iptree.New()
-	log.Printf("Reloading ASN db %s", b.DBFilename)
+	log.Printf("Reloading AS db %s", b.DBFilename)
 	file, err := os.Open(b.DBFilename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
+	var prefix, as string
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, ";") {
@@ -70,7 +72,19 @@ func (b *AsnBackend) reloadDB() error {
 		if len(parts) != 2 {
 			continue
 		}
-		t.AddByString(parts[0], parts[1])
+		prefix = parts[0]
+		as = parts[1]
+
+		rec := Record{
+			AS:     as,
+			Prefix: prefix,
+		}
+		info, existed := b.nameMapping[as]
+		if existed {
+			rec.Owner = info.Owner
+			rec.CC = info.CC
+		}
+		t.AddByString(prefix, rec)
 	}
 	if err := scanner.Err(); err != nil {
 		return err
@@ -80,7 +94,7 @@ func (b *AsnBackend) reloadDB() error {
 }
 
 func (b *AsnBackend) reloadNames() error {
-	log.Printf("Reloading ASN owner db %s", b.NamesFilename)
+	log.Printf("Reloading AS owner db %s", b.NamesFilename)
 	file, err := os.Open(b.NamesFilename)
 	if err != nil {
 		return err
@@ -119,17 +133,11 @@ func (b *AsnBackend) Lookup(ip string) (Record, error) {
 	if err != nil {
 		return rec, err
 	}
-	rec.IP = ip
 	if !found {
-		return rec, nil
+		return Record{IP: ip}, nil
 	}
-	rec.AS = val.(string)
-
-	info, existed := b.nameMapping[rec.AS]
-	if existed {
-		rec.Owner = info.Owner
-		rec.CC = info.CC
-	}
+	rec = val.(Record)
+	rec.IP = ip
 
 	return rec, nil
 }
