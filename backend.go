@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/chromicant/go-iptree"
+	"github.com/josharian/intern"
 )
 
 type JSONOwnerMapping map[string]string
@@ -27,7 +29,7 @@ type AsnBackend struct {
 }
 
 type Record struct {
-	AS     string
+	AS     int
 	Prefix string
 	IP     string
 	Owner  string
@@ -75,14 +77,20 @@ func (b *AsnBackend) reloadDB() error {
 		prefix = parts[0]
 		as = parts[1]
 
+		asint, err := strconv.Atoi(as)
+		if err != nil {
+			log.Printf("Invalid AS in line: %s", line)
+			continue
+		}
+
 		rec := Record{
-			AS:     as,
+			AS:     asint,
 			Prefix: prefix,
 		}
 		info, existed := b.nameMapping[as]
 		if existed {
-			rec.Owner = info.Owner
-			rec.CC = info.CC
+			rec.Owner = intern.String(info.Owner)
+			rec.CC = intern.String(info.CC)
 		}
 		t.AddByString(prefix, rec)
 	}
