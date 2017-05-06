@@ -1,4 +1,4 @@
-package asnlookup
+package asndb
 
 import (
 	"bufio"

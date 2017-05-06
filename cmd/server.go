@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/JustinAzoff/asnlookup"
+	"github.com/JustinAzoff/asnlookup/asndb"
 	pb "github.com/JustinAzoff/asnlookup/pb"
 )
 
@@ -26,7 +26,7 @@ const (
 //}
 
 type asnlookupServer struct {
-	backend *asnlookup.AsnBackend
+	backend *asndb.AsnBackend
 }
 
 func (s *asnlookupServer) Hello(ctx context.Context, empty *pb.Empty) (*pb.HelloReply, error) {
@@ -77,8 +77,8 @@ func (s *asnlookupServer) LookupBatch(ctx context.Context, req *pb.LookupRequest
 	return nil, fmt.Errorf("not yet")
 }
 
-func main() {
-	b, err := asnlookup.NewAsnBackend("asn.db", "asnames.json")
+func server() {
+	b, err := asndb.NewAsnBackend("asn.db", "asnames.json")
 	if err != nil {
 		log.Fatal(err)
 	}

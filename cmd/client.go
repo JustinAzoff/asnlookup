@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -25,7 +25,7 @@ const (
 //        LookupBatch(ctx context.Context, in *LookupRequestBatch, opts ...grpc.CallOption) (*LookupReplyBatch, error)
 //}
 
-func main() {
+func client() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
