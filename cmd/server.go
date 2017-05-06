@@ -12,11 +12,39 @@ import (
 
 	"github.com/JustinAzoff/asnlookup/asndb"
 	pb "github.com/JustinAzoff/asnlookup/pb"
+	"github.com/spf13/cobra"
 )
 
-const (
-	port = ":50051"
-)
+var Bind string
+
+func init() {
+	serverCmd.Flags().StringVarP(&Bind, "bind", "b", ":50051", "Address:port to bind to")
+	RootCmd.AddCommand(serverCmd)
+}
+
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "gRPC Server",
+	Run: func(cmd *cobra.Command, args []string) {
+		b, err := asndb.NewAsnBackend("asn.db", "asnames.json")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Printf("Listening on %s", Bind)
+		lis, err := net.Listen("tcp", Bind)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+
+		server := asnlookupServer{backend: b}
+
+		// Creates a new gRPC server
+		s := grpc.NewServer()
+		pb.RegisterAsnlookupServer(s, &server)
+		s.Serve(lis)
+	},
+}
 
 //type AsnlookupServer interface {
 //        Hello(context.Context, *Empty) (*HelloReply, error)
@@ -75,24 +103,4 @@ func (s *asnlookupServer) LookupMany(stream pb.Asnlookup_LookupManyServer) error
 }
 func (s *asnlookupServer) LookupBatch(ctx context.Context, req *pb.LookupRequestBatch) (*pb.LookupReplyBatch, error) {
 	return nil, fmt.Errorf("not yet")
-}
-
-func server() {
-	b, err := asndb.NewAsnBackend("asn.db", "asnames.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Listening on %s", port)
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	server := asnlookupServer{backend: b}
-
-	// Creates a new gRPC server
-	s := grpc.NewServer()
-	pb.RegisterAsnlookupServer(s, &server)
-	s.Serve(lis)
 }
