@@ -7,7 +7,7 @@ service Asnlookup {
     rpc Lookup (LookupRequest) returns (LookupReply) {}
     rpc LookupMany(stream LookupRequest) returns (stream LookupReply) {}
 
-    rpc LookupBatch(LookupRequestBatch) returns (LookupReplyBatch) {}
+    rpc LookupManyBatch(stream LookupRequestBatch) returns (stream LookupReplyBatch) {}
 }
 
 message Empty {

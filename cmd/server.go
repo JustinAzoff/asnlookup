@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -101,6 +100,32 @@ func (s *asnlookupServer) LookupMany(stream pb.Asnlookup_LookupManyServer) error
 		}
 	}
 }
-func (s *asnlookupServer) LookupBatch(ctx context.Context, req *pb.LookupRequestBatch) (*pb.LookupReplyBatch, error) {
-	return nil, fmt.Errorf("not yet")
+func (s *asnlookupServer) LookupManyBatch(stream pb.Asnlookup_LookupManyBatchServer) error {
+	for {
+		batch, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		response := &pb.LookupReplyBatch{}
+		for _, req := range batch.Requests {
+			rec, err := s.backend.Lookup(req.Address)
+			if err != nil {
+				return err
+			}
+			rep := &pb.LookupReply{
+				Address: rec.IP,
+				Prefix:  rec.Prefix,
+				As:      int32(rec.AS),
+				Owner:   rec.Owner,
+				Cc:      rec.CC,
+			}
+			response.Replies = append(response.Replies, rep)
+		}
+		if err := stream.Send(response); err != nil {
+			return err
+		}
+	}
 }

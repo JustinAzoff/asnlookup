@@ -22,6 +22,10 @@ import (
 //        LookupBatch(ctx context.Context, in *LookupRequestBatch, opts ...grpc.CallOption) (*LookupReplyBatch, error)
 //}
 
+const (
+	batchSize = 200
+)
+
 var Connect string
 
 func init() {
@@ -41,7 +45,7 @@ var clientCmd = &cobra.Command{
 		client := pb.NewAsnlookupClient(conn)
 		client.Hello(context.Background(), &pb.Empty{})
 
-		stream, err := client.LookupMany(context.Background())
+		stream, err := client.LookupManyBatch(context.Background())
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -49,7 +53,7 @@ var clientCmd = &cobra.Command{
 		waitc := make(chan struct{})
 		go func() {
 			for {
-				rec, err := stream.Recv()
+				resp, err := stream.Recv()
 				if err == io.EOF {
 					// read done.
 					close(waitc)
@@ -58,16 +62,29 @@ var clientCmd = &cobra.Command{
 				if err != nil {
 					log.Fatalf("Failed to receive a record: %v", err)
 				}
-				fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.Address, rec.As, rec.Owner, rec.Cc)
+				for _, rec := range resp.Replies {
+					fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.Address, rec.As, rec.Owner, rec.Cc)
+				}
 			}
 		}()
 		scanner := bufio.NewScanner(os.Stdin)
+		batch := &pb.LookupRequestBatch{}
 		for scanner.Scan() {
 			ip := scanner.Text()
 			req := &pb.LookupRequest{Address: ip}
-			err := stream.Send(req)
+			batch.Requests = append(batch.Requests, req)
+			if len(batch.Requests) >= batchSize {
+				err := stream.Send(batch)
+				if err != nil {
+					log.Fatalf("Failed to send: %v", batch)
+				}
+				batch.Requests = batch.Requests[:0]
+			}
+		}
+		if len(batch.Requests) > 0 {
+			err := stream.Send(batch)
 			if err != nil {
-				log.Fatalf("Failed to send: %v", req)
+				log.Fatalf("Failed to send: %v", batch)
 			}
 		}
 		stream.CloseSend()
