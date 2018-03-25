@@ -123,10 +123,12 @@ func (b *AsnBackend) reloadNames() error {
 				info[as] = OwnerInfo{Owner: ownerString}
 			}
 		} else {
-			parts := strings.Split(ownerString, ",")
+			lastIndex := strings.LastIndexAny(ownerString, ",")
+			owner := ownerString[:lastIndex]
+			cc := ownerString[lastIndex+1:]
 			info[as] = OwnerInfo{
-				Owner: strings.TrimSpace(parts[0]),
-				CC:    strings.TrimSpace(parts[1]),
+				Owner: strings.TrimSpace(owner),
+				CC:    strings.TrimSpace(cc),
 			}
 		}
 	}
