@@ -23,7 +23,7 @@ import (
 //}
 
 const (
-	batchSize = 200
+	batchSize = 500
 )
 
 var Connect string
@@ -63,7 +63,10 @@ var clientCmd = &cobra.Command{
 					log.Fatalf("Failed to receive a record: %v", err)
 				}
 				for _, rec := range resp.Replies {
-					fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.Address, rec.As, rec.Owner, rec.Cc)
+					if rec.Cc == "" {
+						rec.Cc = "-"
+					}
+					fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.Address, rec.As, rec.Cc, rec.Owner)
 				}
 			}
 		}()
