@@ -11,11 +11,11 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/JustinAzoff/asnlookup/pb"
+	pb "github.com/JustinAzoff/hostlookup/pb"
 	"github.com/spf13/cobra"
 )
 
-//type AsnlookupClient interface {
+//type HostLookupClient interface {
 //        Hello(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HelloReply, error)
 //        Lookup(ctx context.Context, in *LookupRequest, opts ...grpc.CallOption) (*LookupReply, error)
 //        LookupMany(ctx context.Context, opts ...grpc.CallOption) (Asnlookup_LookupManyClient, error)
@@ -42,7 +42,7 @@ var clientCmd = &cobra.Command{
 			log.Fatalf("did not connect: %v", err)
 		}
 		defer conn.Close()
-		client := pb.NewAsnlookupClient(conn)
+		client := pb.NewHostlookupClient(conn)
 		client.Hello(context.Background(), &pb.Empty{})
 
 		stream, err := client.LookupManyBatch(context.Background())
@@ -63,10 +63,7 @@ var clientCmd = &cobra.Command{
 					log.Fatalf("Failed to receive a record: %v", err)
 				}
 				for _, rec := range resp.Replies {
-					if rec.Cc == "" {
-						rec.Cc = "-"
-					}
-					fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.Address, rec.As, rec.Cc, rec.Owner)
+					fmt.Printf("%s\t%s\n", rec.Address, rec.Host)
 				}
 			}
 		}()

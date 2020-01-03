@@ -9,8 +9,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/JustinAzoff/asnlookup/asndb"
-	pb "github.com/JustinAzoff/asnlookup/pb"
+	"github.com/JustinAzoff/hostlookup/hostdb"
+	pb "github.com/JustinAzoff/hostlookup/pb"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +25,7 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "gRPC Server",
 	Run: func(cmd *cobra.Command, args []string) {
-		b, err := asndb.NewAsnBackend("asn.db", "asnames.json")
+		b, err := hostdb.NewHostBackend("shrunken.csv.gz")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -36,46 +36,42 @@ var serverCmd = &cobra.Command{
 			log.Fatalf("failed to listen: %v", err)
 		}
 
-		server := asnlookupServer{backend: b}
+		server := hostlookupServer{backend: b}
 
 		// Creates a new gRPC server
 		s := grpc.NewServer()
-		pb.RegisterAsnlookupServer(s, &server)
+		pb.RegisterHostlookupServer(s, &server)
 		s.Serve(lis)
 	},
 }
 
-//type AsnlookupServer interface {
+//type hostlookupServer interface {
 //        Hello(context.Context, *Empty) (*HelloReply, error)
 //        Lookup(context.Context, *LookupRequest) (*LookupReply, error)
-//        LookupMany(Asnlookup_LookupManyServer) error
+//        LookupMany(hostlookup_LookupManyServer) error
 //        LookupBatch(context.Context, *LookupRequestBatch) (*LookupReplyBatch, error)
 //}
 
-type asnlookupServer struct {
-	backend *asndb.AsnBackend
+type hostlookupServer struct {
+	backend *hostdb.HostBackend
 }
 
-func (s *asnlookupServer) Hello(ctx context.Context, empty *pb.Empty) (*pb.HelloReply, error) {
+func (s *hostlookupServer) Hello(ctx context.Context, empty *pb.Empty) (*pb.HelloReply, error) {
 	log.Printf("Hello called!")
 	return &pb.HelloReply{
 		Message: "Hello!",
 	}, nil
 }
-func (s *asnlookupServer) Lookup(ctx context.Context, req *pb.LookupRequest) (*pb.LookupReply, error) {
+func (s *hostlookupServer) Lookup(ctx context.Context, req *pb.LookupRequest) (*pb.LookupReply, error) {
 	rec, err := s.backend.Lookup(req.Address)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.LookupReply{
-		Address: rec.IP,
-		Prefix:  rec.Prefix,
-		As:      int32(rec.AS),
-		Owner:   rec.Owner,
-		Cc:      rec.CC,
+		Host: rec.Host,
 	}, nil
 }
-func (s *asnlookupServer) LookupMany(stream pb.Asnlookup_LookupManyServer) error {
+func (s *hostlookupServer) LookupMany(stream pb.Hostlookup_LookupManyServer) error {
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
@@ -89,18 +85,15 @@ func (s *asnlookupServer) LookupMany(stream pb.Asnlookup_LookupManyServer) error
 			return err
 		}
 		rep := &pb.LookupReply{
-			Address: rec.IP,
-			Prefix:  rec.Prefix,
-			As:      int32(rec.AS),
-			Owner:   rec.Owner,
-			Cc:      rec.CC,
+			Address: req.Address,
+			Host:    rec.Host,
 		}
 		if err := stream.Send(rep); err != nil {
 			return err
 		}
 	}
 }
-func (s *asnlookupServer) LookupManyBatch(stream pb.Asnlookup_LookupManyBatchServer) error {
+func (s *hostlookupServer) LookupManyBatch(stream pb.Hostlookup_LookupManyBatchServer) error {
 	for {
 		batch, err := stream.Recv()
 		if err == io.EOF {
@@ -116,11 +109,8 @@ func (s *asnlookupServer) LookupManyBatch(stream pb.Asnlookup_LookupManyBatchSer
 				return err
 			}
 			rep := &pb.LookupReply{
-				Address: rec.IP,
-				Prefix:  rec.Prefix,
-				As:      int32(rec.AS),
-				Owner:   rec.Owner,
-				Cc:      rec.CC,
+				Address: req.Address,
+				Host:    rec.Host,
 			}
 			response.Replies = append(response.Replies, rep)
 		}

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package asnlookup;
+package hostlookup;
 
-service Asnlookup {
+service Hostlookup {
     rpc Hello (Empty) returns (HelloReply) {}
     rpc Lookup (LookupRequest) returns (LookupReply) {}
     rpc LookupMany(stream LookupRequest) returns (stream LookupReply) {}
@@ -24,10 +24,7 @@ message LookupRequest {
 
 message LookupReply {
     string address = 1;
-    int32 as = 2;
-    string prefix = 3;
-    string owner = 4;
-    string cc = 5;
+    string host = 2;
 }
 
 message LookupRequestBatch {

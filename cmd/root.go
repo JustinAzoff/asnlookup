@@ -6,15 +6,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/JustinAzoff/asnlookup/asndb"
+	"github.com/JustinAzoff/hostlookup/hostdb"
 	"github.com/spf13/cobra"
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "asnlookup",
-	Short: "Asnlookup looks up IP addresses to AS Owner info",
+	Use:   "hostlookup",
+	Short: "Hostlookup looks up IP addresses to AS Owner info",
 	Run: func(cmd *cobra.Command, args []string) {
-		b, err := asndb.NewAsnBackend("asn.db", "asnames.json")
+		b, err := hostdb.NewHostBackend("shrunken.csv.gz")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -26,7 +26,7 @@ var RootCmd = &cobra.Command{
 			if err != nil {
 				log.Print(err)
 			} else {
-				fmt.Printf("%s\t%s\t%d\t%s\t%s\n", rec.Prefix, rec.IP, rec.AS, rec.CC, rec.Owner)
+				fmt.Printf("%s\t%s\n", scanner.Text(), rec.Host)
 			}
 		}
 	},

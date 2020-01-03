@@ -1,24 +1,22 @@
-package asndb
+package hostdb
 
 import (
 	"testing"
-
-	"github.com/JustinAzoff/asnlookup/asndb"
 )
 
-func doTestLookup(t *testing.T, b *asndb.AsnBackend) {
+func doTestLookup(t *testing.T, b *HostBackend) {
 	rec, err := b.Lookup("8.8.8.8")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if rec.Owner != "GOOGLE - Google Inc." {
-		t.Fatalf("Expected 'GOOGLE - Google Inc.', got %q", rec.Owner)
+	if rec.Host != "dns" {
+		t.Fatalf("Expected 'dns', got %q", rec.Host)
 	}
 
 }
 
 func TestBackend(t *testing.T) {
-	b, err := asndb.NewAsnBackend("../asn.db", "../asnames.json")
+	b, err := NewHostBackend("shrunken.csv.gz")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,11 +25,11 @@ func TestBackend(t *testing.T) {
 	})
 }
 
-var result *AsnBackend
+var result *HostBackend
 
 func BenchmarkNewBackend(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		be, err := NewAsnBackend("../asn.db", "../asnames.json")
+		be, err := NewHostBackend("shrunken.csv.gz")
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -43,7 +41,7 @@ func BenchmarkNewBackend(b *testing.B) {
 var record Record
 
 func BenchmarkLookup(b *testing.B) {
-	be, err := NewAsnBackend("../asn.db", "../asnames.json")
+	be, err := NewHostBackend("shrunken.csv.gz")
 	if err != nil {
 		b.Fatal(err)
 	}

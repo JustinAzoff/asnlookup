@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/JustinAzoff/asnlookup/cmd"
+	"github.com/JustinAzoff/hostlookup/cmd"
 )
 
 func main() {
