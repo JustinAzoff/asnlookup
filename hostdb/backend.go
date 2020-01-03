@@ -57,7 +57,7 @@ func (b *HostBackend) reload() error {
 	}
 rebuild:
 
-	log.Printf("Reloading AS db %s", b.DBFilename)
+	log.Printf("Reloading db %s", b.DBFilename)
 	file, err := os.Open(b.DBFilename)
 	if err != nil {
 		return err
